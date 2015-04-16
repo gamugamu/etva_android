@@ -1,16 +1,18 @@
 package com.example.abadie.etva;
 
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 
+
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 public class CalculatorDisplay extends ActionBarActivity {
 
@@ -48,6 +50,11 @@ public class CalculatorDisplay extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onPadTapped(View v){
+        // var
+        Log.v("aaa", "xxxs");
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -61,6 +68,11 @@ public class CalculatorDisplay extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_calculator_display, container, false);
             return rootView;
+        }
+
+        public void onPadTapped(View v){
+            // var
+            Log.v("bbb", "xxxs");
         }
     }
 }
