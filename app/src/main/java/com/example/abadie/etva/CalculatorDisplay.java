@@ -9,8 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 public class CalculatorDisplay extends ActionBarActivity {
+    CalculatorEngine calculator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +22,8 @@ public class CalculatorDisplay extends ActionBarActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
+
+            calculator = new CalculatorEngine();
         }
     }
 
@@ -47,11 +51,8 @@ public class CalculatorDisplay extends ActionBarActivity {
     }
 
     public void onPadTapped(View v){
-        // var
-        Log.v("aaa", "xxxs");
-        MathEval math = new MathEval();
-        String result = String.valueOf(math.evaluate("6+12"));
-        Log.v("aaa: ", result);                        // 20
+        Button asButton = (Button)v;
+        calculator.appendNewEpx(asButton.getText().toString());
     }
 
     /**
