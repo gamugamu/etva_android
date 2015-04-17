@@ -10,10 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 public class CalculatorDisplay extends ActionBarActivity {
 
     @Override
@@ -53,6 +49,9 @@ public class CalculatorDisplay extends ActionBarActivity {
     public void onPadTapped(View v){
         // var
         Log.v("aaa", "xxxs");
+        MathEval math = new MathEval();
+        String result = String.valueOf(math.evaluate("6+12"));
+        Log.v("aaa: ", result);                        // 20
     }
 
     /**
@@ -68,11 +67,6 @@ public class CalculatorDisplay extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_calculator_display, container, false);
             return rootView;
-        }
-
-        public void onPadTapped(View v){
-            // var
-            Log.v("bbb", "xxxs");
         }
     }
 }
