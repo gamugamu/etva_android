@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
  */
 public class CalculatorEngine {
     static Pattern REG_ALPHANUMERIC  = Pattern.compile( "[-]?[0-9]*\\.?,?[0-9]+" ); // digit and "."
-    static Pattern REG_MATHEXPR      = Pattern.compile( "[\\/\\+=-]" ); // only +=-/
-    static Pattern REG_HASDIGIT      = Pattern.compile("[0-9]");
+    static Pattern REG_MATHEXPR      = Pattern.compile( "[\\/\\+=-\\\\*\\\\]" ); // only +=-/*
+    static Pattern REG_HASDIGIT      = Pattern.compile( "[a-zA-Z0-9]+" );
 
     MathEval mmathExpression = new MathEval();
     String[] mcurrentExpression; // left and right
@@ -81,10 +81,15 @@ public class CalculatorEngine {
     }
 
     public String evaluateExp(){
-        this.removeOperatorIfLastDigitOnCurrentIndex();
-        String evaluation = mcurrentExpression[0] + mcurrentExpression[1];
+        if( mcurrentExpression[1].equals(" ")/* enabled for nothing */)
+            mcurrentExpression[1] = "";
 
-        if(evaluation.isEmpty() || !CalculatorEngine.hasDigit(evaluation))
+        String evaluation   = mcurrentExpression[0] + mcurrentExpression[1];
+        evaluation          = this.removeOperatorIfLastDigitOnCurrentIndex(evaluation);
+
+        Log.v("aaa", evaluation + " haDigit = " + CalculatorEngine.hasDigit(evaluation));
+
+        if(evaluation.isEmpty() || !(CalculatorEngine.hasDigit(evaluation)))
             evaluation = "0";
 
         return String.valueOf(mmathExpression.evaluate(evaluation));
@@ -102,22 +107,19 @@ public class CalculatorEngine {
     }
 
     // Remove the situation of pattern like "1+5+", "2+8*"
-    private void removeOperatorIfLastDigitOnCurrentIndex(){
-        int idx          = this.currentExpIndex();
-        String cExp      = mcurrentExpression[idx];
-
-        if(cExp.length() != 0){
-            String lastChar  = cExp.substring(cExp.length() - 1);
-
-            cExp = cExp.substring(1, cExp.length());
+    private String removeOperatorIfLastDigitOnCurrentIndex(String expr){
+        if(expr.length() != 0){
+            String lastChar  = expr.substring(expr.length() - 1);
 
             if(isMathOperator(lastChar))
-                 mcurrentExpression[idx] = cExp.substring(0, cExp.length()-1);
+                expr = expr.substring(0, expr.length()-1);
         }
+
+        return expr;
     }
 
     private static boolean hasDigit(String expr){
-        return REG_HASDIGIT.matcher(expr).matches();
+        return REG_HASDIGIT.matcher(expr).find(0);
     }
 
     private static boolean isMathOperator( String value ){
