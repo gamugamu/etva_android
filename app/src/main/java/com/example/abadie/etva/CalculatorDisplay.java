@@ -52,7 +52,10 @@ public class CalculatorDisplay extends ActionBarActivity {
 
     public void onPadTapped(View v){
         Button asButton = (Button)v;
-        calculator.appendNewEpx(asButton.getText().toString());
+        String exp = asButton.getText().toString();
+
+        if(calculator.canAppendExp(exp))
+            calculator.appendNewEpx(exp);
     }
 
     /**
