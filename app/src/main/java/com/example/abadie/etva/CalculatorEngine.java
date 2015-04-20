@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+enum calculatorModeDisplay{
+    calculatorModeDisplay_mode1
+};
+
 /**
  * Created by abadie on 17/04/2015.
  */
@@ -23,7 +27,10 @@ public class CalculatorEngine {
 
     public void appendNewEpx(String exp){
         if(exp.equals("=")){
-            Log.v("aaa", this.evaluateExp());
+            Log.v("aaa", "resutl = " + this.evaluateExp());
+            Log.v("aaa", this.asDisplay(calculatorModeDisplay.calculatorModeDisplay_mode1));
+            Log.v("aaa", mcurrentExpression[0] + " | " + mcurrentExpression[1]);
+
             this.clear();
         }
         // include 1-9 . and +-*/
@@ -45,8 +52,10 @@ public class CalculatorEngine {
                 mcurrentExpression[0] += exp;
                 mcurrentExpression[1] = " "; // enable
             }
+
+            Log.v("aaa", mcurrentExpression[0] + " | " + mcurrentExpression[1]);
+            Log.v("aaa", this.asDisplay(calculatorModeDisplay.calculatorModeDisplay_mode1));
         }
-        Log.v("aaa", mcurrentExpression[0] + " | " + mcurrentExpression[1]);
     }
 
     // control only float number.
@@ -80,6 +89,21 @@ public class CalculatorEngine {
         mcurrentExpression = new String[]{"", ""};
     }
 
+    public String asDisplay(calculatorModeDisplay mode){
+        if(mode == calculatorModeDisplay.calculatorModeDisplay_mode1){
+            int idx      = this.currentExpIndex();
+            String cExp  = mcurrentExpression[idx];
+            cExp         = this.removeOperatorIfLastDigitOnCurrentIndex(cExp);
+
+            if(!CalculatorEngine.hasDigit(cExp)){
+                cExp = mcurrentExpression[0];
+                cExp = this.removeOperatorIfLastDigitOnCurrentIndex(cExp);
+            }
+            return "== " + cExp;
+        }else
+            return  "";
+    }
+
     public String evaluateExp(){
         if( mcurrentExpression[1].equals(" ")/* enabled for nothing */)
             mcurrentExpression[1] = "";
@@ -87,12 +111,14 @@ public class CalculatorEngine {
         String evaluation   = mcurrentExpression[0] + mcurrentExpression[1];
         evaluation          = this.removeOperatorIfLastDigitOnCurrentIndex(evaluation);
 
-        Log.v("aaa", evaluation + " haDigit = " + CalculatorEngine.hasDigit(evaluation));
-
         if(evaluation.isEmpty() || !(CalculatorEngine.hasDigit(evaluation)))
             evaluation = "0";
 
-        return String.valueOf(mmathExpression.evaluate(evaluation));
+        // prevent asDisplay method
+        mcurrentExpression[0] = String.valueOf(mmathExpression.evaluate(evaluation));
+        mcurrentExpression[1] = "";
+
+        return mcurrentExpression[0];
     }
 
     // return the left or right index. This means 0 or 1 here.
