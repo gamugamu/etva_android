@@ -115,7 +115,12 @@ public class CalculatorEngine {
             evaluation = "0";
 
         // prevent asDisplay method
-        mcurrentExpression[0] = String.valueOf(mmathExpression.evaluate(evaluation));
+        try{
+             mcurrentExpression[0] = String.valueOf(mmathExpression.evaluate(evaluation));
+        }catch(ArithmeticException e){
+             mcurrentExpression[0] = "0";
+            Log.v("aaa", "*");
+        }
         mcurrentExpression[1] = "";
 
         return mcurrentExpression[0];
