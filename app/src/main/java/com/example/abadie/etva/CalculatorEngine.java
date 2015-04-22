@@ -10,16 +10,24 @@ enum calculatorModeDisplay{
     calculatorModeDisplay_mode1
 };
 
+enum calculatorModeTva{
+    calculatorModeTva_tvaAdded,
+    calculatorModeTva_tvaRemoved
+};
+
 /**
  * Created by abadie on 17/04/2015.
  */
 public class CalculatorEngine {
-    static Pattern REG_ALPHANUMERIC  = Pattern.compile( "[-]?[0-9]*\\.?,?[0-9]+" ); // digit and "."
-    static Pattern REG_MATHEXPR      = Pattern.compile( "[\\/\\+=-\\\\*\\\\]" ); // only +=-/*
-    static Pattern REG_HASDIGIT      = Pattern.compile( "[a-zA-Z0-9]+" );
+    public String tvaAmount;
+    public calculatorModeTva modeTva;
 
-    MathEval mmathExpression = new MathEval();
-    String[] mcurrentExpression; // left and right
+    private static Pattern REG_ALPHANUMERIC  = Pattern.compile( "[-]?[0-9]*\\.?,?[0-9]+" ); // digit and "."
+    private static Pattern REG_MATHEXPR      = Pattern.compile( "[\\/\\+=-\\\\*\\\\]" ); // only +=-/*
+    private static Pattern REG_HASDIGIT      = Pattern.compile( "[a-zA-Z0-9]+" );
+
+    private MathEval mmathExpression = new MathEval();
+    private String[] mcurrentExpression; // left and right
 
     public CalculatorEngine(){
         this.clear();
@@ -116,7 +124,16 @@ public class CalculatorEngine {
 
         // prevent asDisplay method
         try{
-             mcurrentExpression[0] = String.valueOf(mmathExpression.evaluate(evaluation));
+            if(modeTva == calculatorModeTva.calculatorModeTva_tvaAdded)
+                // tva added
+                evaluation += "+" + evaluation + "*" + tvaAmount + "*.01";
+            else
+                // tva removed
+                evaluation += "*(" + tvaAmount + "*.01 + 1)";
+
+            Log.v("aaa", "*" + evaluation);
+
+            mcurrentExpression[0] = String.valueOf(mmathExpression.evaluate(evaluation));
         }catch(ArithmeticException e){
              mcurrentExpression[0] = "0";
             Log.v("aaa", "*");
@@ -147,6 +164,14 @@ public class CalculatorEngine {
         }
 
         return expr;
+    }
+
+    public String getTvaAmount() {
+        return tvaAmount;
+    }
+
+    public void setTvaAmount(String tvaAmount) {
+        this.tvaAmount = tvaAmount;
     }
 
     private static boolean hasDigit(String expr){

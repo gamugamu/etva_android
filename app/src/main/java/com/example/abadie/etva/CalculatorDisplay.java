@@ -24,6 +24,8 @@ public class CalculatorDisplay extends ActionBarActivity {
                     .commit();
 
             calculator = new CalculatorEngine();
+            calculator.setTvaAmount("5");
+            calculator.modeTva = calculatorModeTva.calculatorModeTva_tvaRemoved;
         }
     }
 
