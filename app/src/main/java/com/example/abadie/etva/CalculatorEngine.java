@@ -21,6 +21,7 @@ enum calculatorModeTva{
 public class CalculatorEngine {
     public String tvaAmount;
     public calculatorModeTva modeTva;
+    public CallBack callBack;
 
     private static Pattern REG_ALPHANUMERIC  = Pattern.compile( "[-]?[0-9]*\\.?,?[0-9]+" ); // digit and "."
     private static Pattern REG_MATHEXPR      = Pattern.compile( "[\\/\\+=-\\\\*\\\\]" ); // only +=-/*
@@ -35,9 +36,9 @@ public class CalculatorEngine {
 
     public void appendNewEpx(String exp){
         if(exp.equals("=")){
-            Log.v("aaa", "resutl = " + this.evaluateExp());
-            Log.v("aaa", this.asDisplay(calculatorModeDisplay.calculatorModeDisplay_mode1));
-            Log.v("aaa", mcurrentExpression[0] + " | " + mcurrentExpression[1]);
+
+            if(callBack != null)
+                callBack.cbAmountDisplay(this.evaluateExp());
 
             this.clear();
         }
@@ -61,8 +62,8 @@ public class CalculatorEngine {
                 mcurrentExpression[1] = " "; // enable
             }
 
-            Log.v("aaa", mcurrentExpression[0] + " | " + mcurrentExpression[1]);
-            Log.v("aaa", this.asDisplay(calculatorModeDisplay.calculatorModeDisplay_mode1));
+            if(callBack != null)
+                callBack.cbAmountDisplay(this.asDisplay(calculatorModeDisplay.calculatorModeDisplay_mode1));
         }
     }
 
@@ -107,9 +108,9 @@ public class CalculatorEngine {
                 cExp = mcurrentExpression[0];
                 cExp = this.removeOperatorIfLastDigitOnCurrentIndex(cExp);
             }
-            return "== " + cExp;
+            return cExp;
         }else
-            return  "";
+            return "";
     }
 
     public String evaluateExp(){
@@ -124,6 +125,7 @@ public class CalculatorEngine {
 
         // prevent asDisplay method
         try{
+            /*
             if(modeTva == calculatorModeTva.calculatorModeTva_tvaAdded)
                 // tva added
                 evaluation += "+" + evaluation + "*" + tvaAmount + "*.01";
@@ -132,8 +134,9 @@ public class CalculatorEngine {
                 evaluation += "*(" + tvaAmount + "*.01 + 1)";
 
             Log.v("aaa", "*" + evaluation);
-
+*/
             mcurrentExpression[0] = String.valueOf(mmathExpression.evaluate(evaluation));
+
         }catch(ArithmeticException e){
              mcurrentExpression[0] = "0";
             Log.v("aaa", "*");

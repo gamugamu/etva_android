@@ -1,5 +1,6 @@
 package com.example.abadie.etva;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -10,25 +11,37 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class CalculatorDisplay extends ActionBarActivity {
     CalculatorEngine calculator;
+    PlaceholderFragment mCalcFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator_display);
+
         if (savedInstanceState == null) {
+            mCalcFragment = new PlaceholderFragment();
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, mCalcFragment)
                     .commit();
+
+            CallBack cb = new CallBack(){
+                public void cbAmountDisplay(String value){
+                    mCalcFragment.setAmountDisplay(value);
+                }
+            };
 
             calculator = new CalculatorEngine();
             calculator.setTvaAmount("5");
+            calculator.callBack = cb;
+
             calculator.modeTva = calculatorModeTva.calculatorModeTva_tvaRemoved;
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,13 +78,21 @@ public class CalculatorDisplay extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        TextView mAmountDisplay;
+
+        public void setAmountDisplay(String amountDisplay) {
+            this.mAmountDisplay.setText(amountDisplay);
+        }
+
         public PlaceholderFragment() {
+            Log.v("aaa", "initialized");
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_calculator_display, container, false);
+            mAmountDisplay = (TextView)rootView.findViewById(R.id.amountDisplay);
             return rootView;
         }
     }
